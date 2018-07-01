@@ -70,7 +70,7 @@ function BinaryTree(){
     this.preOrderTraverse = function (callback) {
         preOrderTraverseNode(root, callback)
     }
-
+    //用在操作系统的文件系统之中，就是找文件的效率高
     var postOrderTraverseNode = function (node, callback) {
         if (node !== null){//如果当前节点不为空，先打印节点的值
             //先访问左子树
@@ -85,7 +85,52 @@ function BinaryTree(){
     this.postOrderTraverse = function (callback) {
         postOrderTraverseNode(root, callback)
     }
-    //用在操作系统的文件系统之中，就是找文件的效率高
+
+    var minNode = function (node) {
+        if(node){//如果当前节点不是空
+            while(node && node.left !== null){//看当前节点有没有左孩子，直到左孩子不存在为止
+                node = node.left;//如果有左孩子，则进入左孩子
+            }
+            return node.key;//没有左孩子，直接返回
+        }
+        return null;//节点为空，返回null
+    }
+    //查找最小值
+    this.min = function () {
+        return minNode(root)
+    }
+
+    var maxNode = function (node) {
+        if(node){//如果当前节点不是空
+            while(node && node.right !== null){//看当前节点有没有右孩子，直到右孩子不存在为止
+                node = node.right;//如果有右孩子，则进入右孩子
+            }
+            return node.key;//没有右孩子，直接返回
+        }
+        return null;//节点为空，返回null
+    }
+    //查找最大值
+    this.max = function () {
+        return maxNode(root)
+    }
+
+    var searchNode = function (node, key) {
+        if(node == null){//如果当前节点不存在
+            return false;//查找失败
+        }
+
+        if(key < node.key){//如果不是null,如果要查找的值比当前节点的值小，进入当前节点的左子树
+            return searchNode(node.left, key);
+        }else if(key > node.key){//如果要查找的值比当前节点的值大，进入当前节点的右子树
+            return searchNode(node.right, key);
+        }else {//如果当前节点的值和传入的参数的值相等，返回true,表明查找成功
+            return true;
+        }
+    }
+    //查找给定的数值
+    this.search = function (key) {//key是查找的值
+        return searchNode(root, key)
+    }
 }
 var nodes = [8, 3, 10, 1, 6, 14, 4, 7, 13];
 var binaryTree = new BinaryTree();
@@ -100,3 +145,7 @@ var callback = function (key) {
 // binaryTree.inOrderTraverse(callback)
 // binaryTree.preOrderTraverse(callback)
 binaryTree.postOrderTraverse(callback)
+console.log('min node is: ' + binaryTree.min());
+console.log('max node is: ' + binaryTree.max());
+console.log(binaryTree.search(7) ? 'key 7 is found' : 'key 7 is not found');
+console.log(binaryTree.search(9) ? 'key 9 is found' : 'key 9 is not found');
