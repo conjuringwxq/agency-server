@@ -167,7 +167,7 @@ function BinaryTree(){
 
             //3.如果含有两个子树
             var aux = findMinNode(node.right);//找到右子树最小值节点
-            node.key = aux.key;
+            node.key = aux.key;//将要删除的节点的值更新为最小值节点的值
             node.right = removeNode(node.right, aux.key)//将最小节点从当前节点的右子树中进行删除
         }
     }
