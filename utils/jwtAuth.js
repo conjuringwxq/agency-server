@@ -26,11 +26,15 @@ const jwtAuth = expressJwt({
   path: [
     "/user/login",
     "/user/register",
-    "/housing/uploadImg",
+    // "/housing/uploadImg",
     "/housing/rental",
     "/housing/message",
     '/housing/serial',
-    '/housing/recommend'
+    '/housing/delserial',
+    '/housing/recommend',
+    '/entrust/issure',
+    '/entrust/info',
+    '/entrust/updateStatus'
   ]
 });
 

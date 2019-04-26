@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const housingSchema = new Schema({
+const entrustSchema = new Schema({
   // 房源id
   houseId: Schema.Types.ObjectId,
   // 房源类型
@@ -45,7 +45,12 @@ const housingSchema = new Schema({
   // 称呼
   appellation: { type: String, required: true },
   // 联系方式
-  phone: { type: String, required: true }
+  phone: { type: String, required: true },
+  // 接单情况
+  accept: {
+    name: { type: String, required: true },
+    status: { type: Boolean, required: true }
+  }
 });
 
-mongoose.model("Housing", housingSchema);
+mongoose.model("Entrust", entrustSchema);

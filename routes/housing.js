@@ -35,8 +35,8 @@ const mongoose = require("mongoose");
 //             }
 //         })
 //     })
-
 // })
+
 // 发布房源信息
 router.post("/rental", async (req, res) => {
   console.log(req.body);
@@ -109,11 +109,13 @@ router.get("/message", async (req, res) => {
     // 判断是否进行了搜索
     if (req.query.s) {
       Housing.find()
-        .and([{
+        .and([
+          {
             houseType: req.query.type
           },
           {
-            $or: [{
+            $or: [
+              {
                 houseTitle: {
                   $regex: new RegExp(req.query.s, "i")
                 }
@@ -162,7 +164,8 @@ router.get("/message", async (req, res) => {
         });
     } else {
       Housing.find()
-        .and([{
+        .and([
+          {
             houseType: req.query.type
           },
           {
@@ -192,25 +195,45 @@ router.get("/message", async (req, res) => {
         });
     }
   } else {
-    // 如果没传递这三个参数，直接查询所有数据
-    Housing.find({
+    if (req.query.type) {
+      // 如果没传递这三个参数，直接查询所有数据
+      Housing.find({
         houseType: req.query.type
       })
-      .exec()
-      .then(result => {
-        res.json({
-          code: 0,
-          result,
-          count: result.length
+        .exec()
+        .then(result => {
+          res.json({
+            code: 0,
+            result,
+            count: result.length
+          });
+        })
+        .catch(err => {
+          res.json({
+            code: 1,
+            msg: "获取信息失败",
+            err
+          });
         });
-      })
-      .catch(err => {
-        res.json({
-          code: 1,
-          msg: "获取信息失败",
-          err
+    } else {
+      // 直接查询所有数据
+      Housing.find({})
+        .exec()
+        .then(result => {
+          res.json({
+            code: 0,
+            result,
+            count: result.length
+          });
+        })
+        .catch(err => {
+          res.json({
+            code: 1,
+            msg: "获取信息失败",
+            err
+          });
         });
-      });
+    }
   }
 });
 // 根据id获取房源信息
@@ -219,8 +242,8 @@ router.get("/serial", async (req, res) => {
   const Housing = mongoose.model("Housing");
   try {
     await Housing.findOne({
-        _id: req.query.id
-      })
+      _id: req.query.id
+    })
       .exec()
       .then(result => {
         res.json({
@@ -237,15 +260,35 @@ router.get("/serial", async (req, res) => {
     });
   }
 });
+// 根据id删除房源信息
+router.post("/delserial", async (req, res) => {
+  const Housing = mongoose.model("Housing");
+  await Housing.remove({
+    _id: req.body.id
+  })
+    .then(() => {
+      res.json({
+        code: 0,
+        msg: "删除成功"
+      });
+    })
+    .catch(err => {
+      res.json({
+        code: 1,
+        msg: "删除失败",
+        err
+      });
+    });
+});
 // 获取非当前id的四个房源信息，限制返回4条
 router.get("/recommend", async (req, res) => {
   const Housing = mongoose.model("Housing");
   try {
     await Housing.find({
-        _id: {
-          $ne: req.query.id
-        }
-      })
+      _id: {
+        $ne: req.query.id
+      }
+    })
       .limit(4)
       .exec()
       .then(result => {
