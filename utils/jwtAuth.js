@@ -32,9 +32,15 @@ const jwtAuth = expressJwt({
     '/housing/serial',
     '/housing/delserial',
     '/housing/recommend',
+    '/housing/attention',
     '/entrust/issure',
     '/entrust/info',
-    '/entrust/updateStatus'
+    '/entrust/updateStatus',
+    "/admin/login",
+    "/admin/register",
+    '/admin/updateMsg',
+    '/admin/adminInfo',
+    '/admin/del'
   ]
 });
 

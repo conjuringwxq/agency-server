@@ -4,7 +4,7 @@ module.exports = {
     PORT: 9093
   },
   // token 密钥
-  SECRET: "myjwttoken",
+  SECRET: `myjwttoken${parseInt(Math.random()*10)}auth`,
   // 数据库链接
   DATABASE: "mongodb://localhost:27017/housing"
 };

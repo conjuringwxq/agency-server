@@ -37,7 +37,7 @@ const entrustSchema = new Schema({
     current: { type: Number, required: true }
   },
   // 关注人数
-  attention_number: { type: String, required: true },
+  attention_number: { type: Number, required: true },
   // 发布时间
   time: { type: Date, required: true },
   // 价格

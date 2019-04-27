@@ -283,12 +283,19 @@ router.post("/delserial", async (req, res) => {
 // 获取非当前id的四个房源信息，限制返回4条
 router.get("/recommend", async (req, res) => {
   const Housing = mongoose.model("Housing");
+  console.log(req.query.type)
   try {
-    await Housing.find({
-      _id: {
-        $ne: req.query.id
-      }
-    })
+    await Housing.find()
+      .and([
+        {
+          _id: {
+            $ne: req.query.id
+          }
+        },
+        {
+          houseType: req.query.type
+        }
+      ])
       .limit(4)
       .exec()
       .then(result => {
@@ -305,5 +312,59 @@ router.get("/recommend", async (req, res) => {
     });
   }
 });
-
+// 关注房源
+router.post("/attention", async (req, res) => {
+  const Housing = mongoose.model("Housing");
+  await Housing.updateOne(
+    {
+      _id: req.body.id
+    },
+    {
+      $inc: {
+        attention_number: 1
+      }
+    }
+  )
+    .then(result => {
+      res.json({
+        code: 0,
+        msg: "关注成功"
+      });
+    })
+    .catch(err => {
+      res.json({
+        code: 1,
+        msg: "关注失败",
+        err
+      });
+    });
+});
+// 取消关注
+router.post("/unfollow", async (req, res) => {
+  console.log(req.body);
+  const Housing = mongoose.model("Housing");
+  await Housing.updateOne(
+    {
+      _id: req.body.id
+    },
+    {
+      $inc: {
+        attention_number: -1
+      }
+    }
+  )
+    .then(result => {
+      res.json({
+        code: 0,
+        msg: "取关成功"
+      });
+    })
+    .catch(err => {
+      res.json({
+        code: 1,
+        msg: "取关失败",
+        err
+      });
+    });
+});
 module.exports = router;

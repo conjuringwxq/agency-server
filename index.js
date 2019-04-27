@@ -13,6 +13,7 @@ const jwtAuth = require("./utils/jwtAuth"); // 导入token中间件
 const userRouter = require("./routes/user"); 
 const housingRouter = require("./routes/housing"); 
 const entrustRouter = require("./routes/entrust"); 
+const adminRouter = require("./routes/admin"); 
 
 // cors跨域解决
 app.all("*", (req, res, next) => {
@@ -55,6 +56,7 @@ app.use((err, req, res, next) => {
 app.use("/user", userRouter);
 app.use("/housing", housingRouter);
 app.use("/entrust", entrustRouter);
+app.use("/admin", adminRouter);
 
 // 开启服务
 app.listen(NETWORK.PORT, () => {
