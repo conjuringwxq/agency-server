@@ -23,7 +23,7 @@ const housingSchema = new Schema({
       toilet: Number
     },
     // 面积
-    area: { type: Number, required: true },
+    area: { type: String, required: true },
     // 方向
     direction: { type: String, required: true },
     // 装修情况

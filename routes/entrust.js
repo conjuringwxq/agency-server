@@ -85,7 +85,8 @@ router.post('/updateStatus', async (req, res) => {
         _id: req.body.id
     }, {
         $set: {
-            "accept.status": req.body.status
+            "accept.status": req.body.status,
+            "accept.name": req.body.name
         }
     }).then(result => {
         res.json({

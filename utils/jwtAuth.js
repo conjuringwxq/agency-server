@@ -19,6 +19,10 @@ const jwtAuth = expressJwt({
       return req.query.token;
     } else if (req.body && req.body.token) {
       return req.body.token;
+    } else if (req.query && req.query.admin_token) {
+      return req.query.admin_token;
+    } else if (req.body && req.body.admin_token) { 
+      return req.body.admin_token;
     }
     return null;
   }
@@ -26,7 +30,7 @@ const jwtAuth = expressJwt({
   path: [
     "/user/login",
     "/user/register",
-    // "/housing/uploadImg",
+    "/user/changePwd",
     "/housing/rental",
     "/housing/message",
     '/housing/serial',
@@ -40,7 +44,12 @@ const jwtAuth = expressJwt({
     "/admin/register",
     '/admin/updateMsg',
     '/admin/adminInfo',
-    '/admin/del'
+    '/admin/del',
+    '/attention/add',
+    '/attention/rm',
+    '/attention/content',
+    '/attention/item',
+    '/attention/count'
   ]
 });
 

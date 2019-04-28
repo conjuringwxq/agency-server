@@ -1,49 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-// const multer = require('multer');
-// const fs = require('fs');
-// const upload = multer({
-//     dest: 'uploads/'
-// });
-
-// 图片上传
-// router.post('/uploadImg', upload.any(), (req, res) => {
-//     console.log(req.files);
-//     let newFile = `../uploads/${req.files[0].originalname}`;
-//     fs.readFile(req.files[0].path, (err, data) => {
-//         if (err) {
-//             res.json({
-//                 code: 1,
-//                 msg: '上传图片失败',
-//                 err
-//             })
-//         }
-//         fs.writeFile(newFile, data, err => {
-//             if (err) {
-//                 res.json({
-//                     code: 1,
-//                     msg: '上传图片失败',
-//                     err
-//                 })
-//             } else {
-//                 res.json({
-//                     code: 0,
-//                     msg: '上传文件成功',
-//                     filename: req.files.originalname
-//                 })
-//             }
-//         })
-//     })
-// })
 
 // 发布房源信息
 router.post("/rental", async (req, res) => {
-  console.log(req.body);
   const Housing = mongoose.model("Housing");
   const newHousing = new Housing(req.body);
   try {
-    await newHousing.save(req.body);
+    await newHousing.save();
     res.json({
       code: 0,
       msg: "发布房源信息成功"
@@ -102,137 +66,188 @@ router.get("/message", async (req, res) => {
       };
     }
   }
+  console.log(req.query.type);
   console.log(price, fitment, area);
 
-  // 如果参数不是undefined
-  if (req.query.price || req.query.fitment || req.query.area) {
-    // 判断是否进行了搜索
-    if (req.query.s) {
-      Housing.find()
-        .and([
-          {
-            houseType: req.query.type
-          },
-          {
-            $or: [
-              {
-                houseTitle: {
-                  $regex: new RegExp(req.query.s, "i")
-                }
-              },
-              {
-                "region.name": {
-                  $regex: new RegExp(req.query.s, "i")
-                }
-              },
-              {
-                "region.direction": {
-                  $regex: new RegExp(req.query.s, "i")
-                }
-              },
-              {
-                "region.fitment": {
-                  $regex: new RegExp(req.query.s, "i")
-                }
-              }
-            ]
-          },
-          {
-            price: price
-          },
-          {
-            "region.fitment": fitment
-          },
-          {
-            "region.area": area
-          }
-        ])
-        .exec()
-        .then(result => {
-          res.json({
-            code: 0,
-            result,
-            count: result.length
-          });
-        })
-        .catch(err => {
-          res.json({
-            code: 1,
-            msg: "获取信息失败",
-            err
-          });
+  // 1. 判断是否有type，如果没有，查询所有数据
+  if (!req.query.type) {
+    Housing.find({})
+      .exec()
+      .then(result => {
+        res.json({
+          code: 0,
+          result,
+          count: result.length
         });
-    } else {
-      Housing.find()
-        .and([
-          {
-            houseType: req.query.type
-          },
-          {
-            price: price
-          },
-          {
-            "region.fitment": fitment
-          },
-          {
-            "region.area": area
-          }
-        ])
-        .exec()
-        .then(result => {
-          res.json({
-            code: 0,
-            result,
-            count: result.length
-          });
-        })
-        .catch(err => {
-          res.json({
-            code: 1,
-            msg: "获取信息失败",
-            err
-          });
-        });
-    }
-  } else {
-    if (req.query.type) {
-      // 如果没传递这三个参数，直接查询所有数据
-      Housing.find({
-        houseType: req.query.type
       })
-        .exec()
-        .then(result => {
-          res.json({
-            code: 0,
-            result,
-            count: result.length
-          });
-        })
-        .catch(err => {
-          res.json({
-            code: 1,
-            msg: "获取信息失败",
-            err
-          });
+      .catch(err => {
+        res.json({
+          code: 1,
+          msg: "获取信息失败",
+          err
         });
+      });
+  } else {
+    // 2. 有type，判断是否有搜索，如果没有，进行判断
+    if (!req.query.s) {
+      // 3. 判断是否有筛选，如果没有, 查询含有type的数据
+      if (!(req.query.price || req.query.fitment || req.query.area)) {
+        Housing.find({
+          houseType: req.query.type
+        })
+          .exec()
+          .then(result => {
+            res.json({
+              code: 0,
+              result,
+              count: result.length
+            });
+          })
+          .catch(err => {
+            res.json({
+              code: 1,
+              msg: "获取信息失败",
+              err
+            });
+          });
+      } else {
+        // 4. 如果有筛选，查询含有type和筛选的数据
+        Housing.find()
+          .and([
+            {
+              houseType: req.query.type
+            },
+            {
+              price: price
+            },
+            {
+              "region.fitment": fitment
+            },
+            {
+              "region.area": area
+            }
+          ])
+          .exec()
+          .then(result => {
+            res.json({
+              code: 0,
+              result,
+              count: result.length
+            });
+          })
+          .catch(err => {
+            res.json({
+              code: 1,
+              msg: "获取信息失败",
+              err
+            });
+          });
+      }
     } else {
-      // 直接查询所有数据
-      Housing.find({})
-        .exec()
-        .then(result => {
-          res.json({
-            code: 0,
-            result,
-            count: result.length
+      // 5. 有type同时有搜索，判断是否有筛选，如果没有，查询含有type和搜索的数据
+      if (!(req.query.price || req.query.fitment || req.query.area)) {
+        Housing.find()
+          .and([
+            {
+              houseType: req.query.type
+            },
+            {
+              $or: [
+                {
+                  houseTitle: {
+                    $regex: new RegExp(req.query.s, "i")
+                  }
+                },
+                {
+                  "region.name": {
+                    $regex: new RegExp(req.query.s, "i")
+                  }
+                },
+                {
+                  "region.direction": {
+                    $regex: new RegExp(req.query.s, "i")
+                  }
+                },
+                {
+                  "region.fitment": {
+                    $regex: new RegExp(req.query.s, "i")
+                  }
+                }
+              ]
+            }
+          ])
+          .exec()
+          .then(result => {
+            res.json({
+              code: 0,
+              result,
+              count: result.length
+            });
+          })
+          .catch(err => {
+            res.json({
+              code: 1,
+              msg: "获取信息失败",
+              err
+            });
           });
-        })
-        .catch(err => {
-          res.json({
-            code: 1,
-            msg: "获取信息失败",
-            err
+      } else {
+        // 4. 有type,有搜索，有筛选，查询含有type，搜索和筛选的数据
+        Housing.find()
+          .and([
+            {
+              houseType: req.query.type
+            },
+            {
+              $or: [
+                {
+                  houseTitle: {
+                    $regex: new RegExp(req.query.s, "i")
+                  }
+                },
+                {
+                  "region.name": {
+                    $regex: new RegExp(req.query.s, "i")
+                  }
+                },
+                {
+                  "region.direction": {
+                    $regex: new RegExp(req.query.s, "i")
+                  }
+                },
+                {
+                  "region.fitment": {
+                    $regex: new RegExp(req.query.s, "i")
+                  }
+                }
+              ]
+            },
+            {
+              price: price
+            },
+            {
+              "region.fitment": fitment
+            },
+            {
+              "region.area": area
+            }
+          ])
+          .exec()
+          .then(result => {
+            res.json({
+              code: 0,
+              result,
+              count: result.length
+            });
+          })
+          .catch(err => {
+            res.json({
+              code: 1,
+              msg: "获取信息失败",
+              err
+            });
           });
-        });
+      }
     }
   }
 });
@@ -283,7 +298,7 @@ router.post("/delserial", async (req, res) => {
 // 获取非当前id的四个房源信息，限制返回4条
 router.get("/recommend", async (req, res) => {
   const Housing = mongoose.model("Housing");
-  console.log(req.query.type)
+  console.log(req.query.type);
   try {
     await Housing.find()
       .and([

@@ -14,6 +14,7 @@ const userRouter = require("./routes/user");
 const housingRouter = require("./routes/housing"); 
 const entrustRouter = require("./routes/entrust"); 
 const adminRouter = require("./routes/admin"); 
+const attentionRouter = require("./routes/attention"); 
 
 // cors跨域解决
 app.all("*", (req, res, next) => {
@@ -57,6 +58,7 @@ app.use("/user", userRouter);
 app.use("/housing", housingRouter);
 app.use("/entrust", entrustRouter);
 app.use("/admin", adminRouter);
+app.use("/attention", attentionRouter);
 
 // 开启服务
 app.listen(NETWORK.PORT, () => {

@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const { SECRET } = require("../utils/config");
+const bcrypt = require('bcrypt');
 
 // 注册
 router.post("/register", (req, res) => {
@@ -70,13 +71,44 @@ router.post("/login", async (req, res) => {
     });
 });
 
-// 获取用户信息
-router.get("/info", (req, res, next) => {
+// 修改密码
+router.post("/changePwd", async (req, res) => {
   const User = mongoose.model("User");
-
-  res.json({
-    code: 200
-  });
+  let { username, oldPassword, confirmPassword } = req.body;
+  await User.findOne({ username }).exec().then(async result => { 
+    const newUser = new User();
+    await newUser.comparePassword(oldPassword, result.password).then(isMatch => { 
+      // 如果匹配失败
+      if (!isMatch) {
+        res.json({
+          code: 1,
+          msg: '旧密码不正确，请重新输入'
+        })
+      } else { 
+        // 新密码加密
+        bcrypt.genSalt(10, (err, salt) => {
+          if (err) throw err;
+          bcrypt.hash(confirmPassword, salt, async (err, hash) => {
+            if (err) throw err;
+            confirmPassword = hash;
+            // 如果匹配成功，进行修改
+            await User.updateOne({ username }, { $set: { password: confirmPassword } }).then(() => { 
+              res.json({
+                code: 0,
+                msg: '修改密码成功'
+              })
+            }).catch(err => { 
+              res.json({
+                code: 1,
+                msg: '修改密码失败',
+                err
+              })
+            })
+          });
+        });
+      }
+    })
+  })
 });
 
 module.exports = router;

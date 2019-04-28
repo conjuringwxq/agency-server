@@ -48,8 +48,8 @@ const entrustSchema = new Schema({
   phone: { type: String, required: true },
   // 接单情况
   accept: {
-    name: { type: String, required: true },
-    status: { type: Boolean, required: true }
+    name: { type: String },
+    status: { type: Boolean }
   }
 });
 
