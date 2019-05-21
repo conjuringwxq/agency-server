@@ -20,6 +20,30 @@ router.post("/rental", async (req, res) => {
     });
   }
 });
+// 首页数据
+router.get("/home", async (req, res) => {
+  const Housing = mongoose.model("Housing");
+  try {
+    await Housing.find({
+      houseType: req.query.houseType
+    })
+      .limit(4)
+      .exec()
+      .then(result => {
+        res.json({
+          code: 0,
+          msg: "获取成功",
+          result
+        });
+      });
+  } catch (err) {
+    res.json({
+      code: 1,
+      msg: "获取失败",
+      err
+    });
+  }
+});
 // 获取房源信息
 router.get("/message", async (req, res) => {
   // 定义查询条件
@@ -66,8 +90,6 @@ router.get("/message", async (req, res) => {
       };
     }
   }
-  console.log(req.query.type);
-  console.log(price, fitment, area);
 
   // 1. 判断是否有type，如果没有，查询所有数据
   if (!req.query.type) {
@@ -253,7 +275,6 @@ router.get("/message", async (req, res) => {
 });
 // 根据id获取房源信息
 router.get("/serial", async (req, res) => {
-  console.log(req.query);
   const Housing = mongoose.model("Housing");
   try {
     await Housing.findOne({
@@ -298,7 +319,6 @@ router.post("/delserial", async (req, res) => {
 // 获取非当前id的四个房源信息，限制返回4条
 router.get("/recommend", async (req, res) => {
   const Housing = mongoose.model("Housing");
-  console.log(req.query.type);
   try {
     await Housing.find()
       .and([
@@ -326,60 +346,5 @@ router.get("/recommend", async (req, res) => {
       err
     });
   }
-});
-// 关注房源
-router.post("/attention", async (req, res) => {
-  const Housing = mongoose.model("Housing");
-  await Housing.updateOne(
-    {
-      _id: req.body.id
-    },
-    {
-      $inc: {
-        attention_number: 1
-      }
-    }
-  )
-    .then(result => {
-      res.json({
-        code: 0,
-        msg: "关注成功"
-      });
-    })
-    .catch(err => {
-      res.json({
-        code: 1,
-        msg: "关注失败",
-        err
-      });
-    });
-});
-// 取消关注
-router.post("/unfollow", async (req, res) => {
-  console.log(req.body);
-  const Housing = mongoose.model("Housing");
-  await Housing.updateOne(
-    {
-      _id: req.body.id
-    },
-    {
-      $inc: {
-        attention_number: -1
-      }
-    }
-  )
-    .then(result => {
-      res.json({
-        code: 0,
-        msg: "取关成功"
-      });
-    })
-    .catch(err => {
-      res.json({
-        code: 1,
-        msg: "取关失败",
-        err
-      });
-    });
 });
 module.exports = router;

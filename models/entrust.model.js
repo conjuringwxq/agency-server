@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 const entrustSchema = new Schema({
   // 房源id
   houseId: Schema.Types.ObjectId,
+  // 委托房源的用户
+  uname: { type: String, required: true },
   // 房源类型
   houseType: { type: String, required: true },
   //   房源图片
@@ -48,9 +50,11 @@ const entrustSchema = new Schema({
   phone: { type: String, required: true },
   // 接单情况
   accept: {
-    name: { type: String },
-    status: { type: Boolean }
-  }
+    name: { type: String, default: "" },
+    status: { type: Boolean, default: false }
+  },
+  // 审核状态
+  "audit-status": { type: String, default: "" }
 });
 
 mongoose.model("Entrust", entrustSchema);

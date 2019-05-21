@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 const housingSchema = new Schema({
   // 房源id
   houseId: Schema.Types.ObjectId,
+  // 委托房源id
+  extrustId: { type: String },
   // 房源类型
   houseType: { type: String, required: true },
   //   房源图片
@@ -45,7 +47,12 @@ const housingSchema = new Schema({
   // 称呼
   appellation: { type: String, required: true },
   // 联系方式
-  phone: { type: String, required: true }
+  phone: { type: String, required: true },
+  // 发布人
+  issuer: {
+    name: { type: String },
+    phone: { type: String }
+  }
 });
 
 mongoose.model("Housing", housingSchema);

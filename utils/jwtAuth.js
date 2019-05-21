@@ -1,9 +1,7 @@
 const expressJwt = require("express-jwt");
-const {
-  SECRET
-} = require("./config");
+const { SECRET } = require("./config");
 
-/* 
+/*
  * express-jwt中间件帮我们自动做了token的验证以及错误处理，
  * unless为不需要token认证的api
  **/
@@ -21,7 +19,7 @@ const jwtAuth = expressJwt({
       return req.body.token;
     } else if (req.query && req.query.admin_token) {
       return req.query.admin_token;
-    } else if (req.body && req.body.admin_token) { 
+    } else if (req.body && req.body.admin_token) {
       return req.body.admin_token;
     }
     return null;
@@ -31,25 +29,30 @@ const jwtAuth = expressJwt({
     "/user/login",
     "/user/register",
     "/user/changePwd",
+    "/user/info",
+    "/user/complete",
+    "/user/delete",
     "/housing/rental",
+    "/housing/home",
     "/housing/message",
-    '/housing/serial',
-    '/housing/delserial',
-    '/housing/recommend',
-    '/housing/attention',
-    '/entrust/issure',
-    '/entrust/info',
-    '/entrust/updateStatus',
+    "/housing/serial",
+    "/housing/delserial",
+    "/housing/recommend",
+    "/housing/attention",
+    "/entrust/issure",
+    "/entrust/info",
+    "/entrust/updateStatus",
+    "/entrust/audit-status",
     "/admin/login",
     "/admin/register",
-    '/admin/updateMsg',
-    '/admin/adminInfo',
-    '/admin/del',
-    '/attention/add',
-    '/attention/rm',
-    '/attention/content',
-    '/attention/item',
-    '/attention/count'
+    "/admin/updateMsg",
+    "/admin/adminInfo",
+    "/admin/del",
+    "/attention/add",
+    "/attention/rm",
+    "/attention/content",
+    "/attention/item",
+    "/attention/count"
   ]
 });
 

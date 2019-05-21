@@ -14,7 +14,21 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  // 姓名
+  name: { type: String },
+  // 性别
+  sex: { type: String },
+  // 联系方式
+  phoneNumber: { type: String },
+  // 身份证号
+  idCard: { type: String },
+  // 职业
+  job: { type: String },
+  // 邮箱
+  email: { type: String },
+  // 头像
+  headPortrait: { type: Array }
 });
 // 密码加盐
 userSchema.pre("save", function(next) {

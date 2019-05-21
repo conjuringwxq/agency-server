@@ -8,7 +8,6 @@ const bcrypt = require("bcrypt");
 // 注册
 router.post("/register", (req, res) => {
   const { username, password, time } = req.body;
-  console.log(username, password, time);
   // 导入User模型
   const Admin = mongoose.model("Admin");
   Admin.findOne({ username }, async (err, doc) => {
@@ -97,11 +96,10 @@ router.post("/updateMsg", async (req, res) => {
           }
         }
       )
-        .then(result => {
+        .then(() => {
           res.json({
             code: 0,
-            msg: "更新成功",
-            result
+            msg: "更新成功"
           });
         })
         .catch(err => {

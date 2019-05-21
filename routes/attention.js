@@ -65,7 +65,6 @@ router.post('/rm', async (req, res) => {
 })
 
 router.get('/content', async (req, res) => {
-    console.log(req.query.username)
     const Attention = mongoose.model('Attention');
     await Attention.find({
         username: req.query.username
